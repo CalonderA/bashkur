@@ -4,6 +4,18 @@ const SBER_AUTH_KEY = 'MDE5YzBkZjUtMTY4ZC03NzBlLTg1OWQtMWRlMTEzZDU1NzE4OjdmNzQ1Z
 
 let gigaChatToken = null;
 let saluteSpeechToken = null;
+let currentAudio = null; // Track current audio for cancellation
+
+function stopSpeaking() {
+    if (synthesis) {
+        synthesis.cancel();
+    }
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+    }
+}
 
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -49,54 +61,73 @@ async function ensureTokens() {
 }
 
 async function speakText(text, lang = 'ru-RU') {
-    await ensureTokens();
+    stopSpeaking();
 
-    if (saluteSpeechToken) {
-        try {
-             const dictionaryItem = dictionary.find(item => item.word === text);
-             const textToSpeak = (dictionaryItem && dictionaryItem.tts) ? dictionaryItem.tts : text;
-             const ssml = `<speak>${textToSpeak}</speak>`;
+    // Use a timeout to enforce fast response. If APIs are slow, fallback to browser TTS.
+    const apiTimeout = 1000; // 1 second max for API
+    const startTime = Date.now();
 
-             const response = await fetch('https://smartspeech.sber.ru/rest/v1/text:synthesize', {
-                 method: 'POST',
-                 headers: {
-                     'Authorization': `Bearer ${saluteSpeechToken}`,
-                     'Content-Type': 'application/ssml',
-                 },
-                 body: ssml
-             });
+    try {
+        const result = await Promise.race([
+            (async () => {
+                // Try Sber
+                await ensureTokens();
+                if (saluteSpeechToken) {
+                    try {
+                        const dictionaryItem = dictionary.find(item => item.word === text);
+                        const textToSpeak = (dictionaryItem && dictionaryItem.tts) ? dictionaryItem.tts : text;
+                        const ssml = `<speak>${textToSpeak}</speak>`;
 
-             if (response.ok) {
-                 const blob = await response.blob();
-                 const audioUrl = URL.createObjectURL(blob);
-                 const audio = new Audio(audioUrl);
-                 await audio.play();
-                 return;
-             } else {
-                 console.warn('SaluteSpeech TTS failed:', response.status);
-             }
-        } catch (e) {
-            console.error('SaluteSpeech Error:', e);
-        }
-    }
+                        const response = await fetch('https://smartspeech.sber.ru/rest/v1/text:synthesize', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${saluteSpeechToken}`,
+                                'Content-Type': 'application/ssml',
+                            },
+                            body: ssml
+                        });
 
-    if (!YANDEX_API_KEY || YANDEX_API_KEY === 'YOUR_YANDEX_API_KEY') {
-        fallbackTTS(text, lang);
-        return;
-    }
+                        if (response.ok) {
+                            const blob = await response.blob();
+                            const audioUrl = URL.createObjectURL(blob);
+                            const audio = new Audio(audioUrl);
+                            currentAudio = audio;
+                            await audio.play();
+                            return true;
+                        }
+                    } catch (e) {
+                        console.error('SaluteSpeech Error:', e);
+                    }
+                }
 
-    const dictionaryItem = dictionary.find(item => item.word === text);
-    
-    if (dictionaryItem) {
-        const successKZ = await tryYandexTTS(text, 'kk-KZ', 'madi');
-        if (successKZ) return;
+                // Try Yandex
+                if (!YANDEX_API_KEY || YANDEX_API_KEY === 'YOUR_YANDEX_API_KEY') {
+                    return false;
+                }
 
-        const ttsText = dictionaryItem.tts || text;
-        const successRU = await tryYandexTTS(ttsText, 'ru-RU', 'filipp');
-        if (successRU) return;
-    } else {
-        const success = await tryYandexTTS(text, 'ru-RU', 'filipp');
-        if (success) return;
+                const dictionaryItem = dictionary.find(item => item.word === text);
+                if (dictionaryItem) {
+                    const successKZ = await tryYandexTTS(text, 'kk-KZ', 'madi');
+                    if (successKZ) return true;
+
+                    const ttsText = dictionaryItem.tts || text;
+                    const successRU = await tryYandexTTS(ttsText, 'ru-RU', 'filipp');
+                    if (successRU) return true;
+                } else {
+                    const success = await tryYandexTTS(text, 'ru-RU', 'filipp');
+                    if (success) return true;
+                }
+                
+                return false;
+            })(),
+            new Promise((resolve) => setTimeout(() => resolve('timeout'), apiTimeout))
+        ]);
+
+        if (result === true) return; // API succeeded
+        // If result is false (API failed) or 'timeout', fall through to fallback
+        
+    } catch (e) {
+        console.warn("TTS Error:", e);
     }
 
     fallbackTTS(text, lang);
@@ -125,6 +156,7 @@ async function tryYandexTTS(text, lang, voice) {
             const blob = await response.blob();
             const audioUrl = URL.createObjectURL(blob);
             const audio = new Audio(audioUrl);
+            currentAudio = audio;
             await audio.play();
             return true;
         } else {

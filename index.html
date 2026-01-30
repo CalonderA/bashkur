@@ -6,6 +6,10 @@
     <title>T2: Голос Урала | Башкортостан</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏔️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
     <div class="bg-shape shape-1"></div>
@@ -14,11 +18,19 @@
     <!-- Header -->
     <header class="header">
         <div class="container header-content">
-            <div class="logo">T2 <span class="divider">|</span> <span class="sub-logo">Башкортостан</span></div>
+            <a href="#" class="logo">
+                <img src="t2_Logo_White_sRGB.svg" alt="t2" class="brand-logo-img-small">
+                <span class="divider">|</span> 
+                <span class="sub-logo" data-translate="region">Башкортостан</span>
+            </a>
             <nav class="nav">
-                <a href="#dictionary">Словарь</a>
-                <a href="#culture">Культура</a>
-                <a href="#t2-connect">Связь</a>
+                <a href="#dictionary" data-translate="nav_dict">Словарь</a>
+                <a href="#culture" data-translate="nav_culture">Культура</a>
+                <a href="#t2-connect" data-translate="nav_connect">Связь</a>
+                <button class="lang-switch-btn" onclick="toggleLanguage()">
+                    <span class="lang-icon">🌐</span>
+                    <span id="current-lang">RU</span>
+                </button>
             </nav>
         </div>
     </header>
@@ -27,9 +39,14 @@
     <header class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/T2_Logo.svg/1200px-T2_Logo.svg.png" alt="T2 Logo" class="t2-logo">
+            <img src="t2_Logo_White_sRGB.svg" alt="t2" class="brand-logo-img-large">
             <h1>Открой <span>Башкортостан</span> <br>на скорости T2</h1>
             <p class="subtitle">Будущее связи и вековые традиции в одном месте</p>
+            <div class="scroll-arrow" onclick="document.getElementById('dictionary').scrollIntoView({behavior: 'smooth'})">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 10L12 15L17 10" stroke="#00E676" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
         </div>
     </header>
 
@@ -88,23 +105,102 @@
 
     <!-- Map Section -->
     <section class="culture-section">
-        <h2 class="section-title">Карта достопримечательностей</h2>
+        <h2 class="section-title" data-translate="map_title">Карта достопримечательностей</h2>
         <div id="map" class="map-container"></div>
     </section>
 
+    <!-- Recommendations Section -->
+    <section id="recommendations" class="culture-section">
+        <div class="container">
+            <h2 class="section-title">Рекомендации</h2>
+            <div class="recommendations-grid">
+                <!-- News Card -->
+                <div class="rec-card">
+                    <div class="rec-image" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Salavat_Yulaev_Monument.jpg/640px-Salavat_Yulaev_Monument.jpg');">
+                         <span class="rec-tag">Места</span>
+                    </div>
+                    <div class="rec-content">
+                        <h3>Жемчужины Башкортостана</h3>
+                        <p>Топ-10 мест, которые обязан посетить каждый. От величественных гор до глубоких пещер.</p>
+                        <button class="rec-btn">Смотреть подборку</button>
+                    </div>
+                </div>
+
+                <!-- Culture Card -->
+                <div class="rec-card">
+                    <div class="rec-image" style="background-image: linear-gradient(135deg, #00E676, #00B0FF);">
+                         <span class="rec-tag">Новости</span>
+                    </div>
+                    <div class="rec-content">
+                        <h3>T2 запускает 5G в Уфе</h3>
+                        <p>Сверхскоростной интернет теперь доступен в центре столицы. Будущее связи уже здесь.</p>
+                        <button class="rec-btn">Читать новость</button>
+                    </div>
+                </div>
+
+                 <!-- Traditions Card -->
+                 <div class="rec-card">
+                    <div class="rec-image" style="background-image: linear-gradient(135deg, #E91E63, #9C27B0);">
+                         <span class="rec-tag">Культура</span>
+                    </div>
+                    <div class="rec-content">
+                        <h3>Легенды Урала</h3>
+                        <p>Узнайте больше о мифах и сказаниях башкирского народа. История, оживающая в веках.</p>
+                        <button class="rec-btn">Узнать больше</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <footer>
-        <p>&copy; 2026 T2 Мобайл x Башкортостан. Будущее уже здесь.</p>
+        <p data-translate="footer">&copy; 2026 T2 Мобайл x Башкортостан. Будущее уже здесь.</p>
     </footer>
 
-    <!-- Revert to 2GIS 2.0 API (Leaflet) for stability without MapGL key -->
-    <script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
-    <script src="js/data.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/tts.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/test.js"></script>
-    <script src="js/learning.js"></script>
-    <script src="js/map.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/data.js" defer></script>
+    <script src="js/state.js" defer></script>
+    <script src="js/tts.js" defer></script>
+    <script src="js/chat.js" defer></script>
+    <script src="js/test.js" defer></script>
+    <script src="js/learning.js" defer></script>
+    <script src="js/map.js" defer></script>
+    <script src="js/main.js" defer></script>
+
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-content">
+            <div class="welcome-header">
+                <img src="t2_Logo_White_sRGB.svg" alt="T2 Logo" class="welcome-logo">
+                <h2>Салям! Добро пожаловать!</h2>
+            </div>
+            <div class="welcome-body">
+                <p>Исследуйте красоту Башкортостана вместе с T2.</p>
+                <div class="welcome-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🗺️</span>
+                        <div class="feature-text">
+                            <strong>Интерактивная карта</strong>
+                            <p>Изучайте достопримечательности и проверяйте покрытие сети.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📚</span>
+                        <div class="feature-text">
+                            <strong>Учите язык</strong>
+                            <p>Осваивайте башкирские слова и фразы в игровой форме.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🏔️</span>
+                        <div class="feature-text">
+                            <strong>Культура и традиции</strong>
+                            <p>Погрузитесь в историю и легенды края.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="welcome-btn" onclick="closeWelcomeModal()">Начать путешествие 🚀</button>
+        </div>
+    </div>
 </body>
 </html>

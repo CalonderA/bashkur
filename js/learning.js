@@ -93,6 +93,9 @@ function renderLearningContent() {
         const story = document.createElement('div');
         story.className = 'story-card';
         story.innerHTML = `
+            <div style="text-align: center; margin-bottom: 30px;">
+                <span style="font-size: 5rem;">🏔️</span>
+            </div>
             <h3 class="story-title">Кто такие башкиры?</h3>
             <div class="story-content">
                 <p>Башкиры (башҡорттар) — тюркский народ, коренное население Башкортостана. Их история неразрывно связана с Уральскими горами, бескрайними степями и быстрыми реками.</p>
@@ -114,14 +117,15 @@ function renderLearningContent() {
 
             if (learnedCount < minWords) {
                 wrapper.innerHTML = `
-                    <div class="story-card" style="text-align:center; max-width: 600px; margin: 0 auto;">
-                        <div style="font-size: 3rem; margin-bottom: 20px;">🔒</div>
-                        <h3 class="story-title">Игровой центр закрыт</h3>
-                        <p class="story-content" style="margin-bottom: 30px;">
+                    <div class="locked-card">
+                        <div class="locked-icon">🔒</div>
+                        <h3 class="locked-title">Игровой центр закрыт</h3>
+                        <p class="locked-text">
                             Сначала выучите слова! Нажмите на карточки в разделе "Слова" или "Алфавит", чтобы выучить их.
-                            <br>Выучено: <strong>${learnedCount}</strong> из ${minWords} необходимых.
+                            <br><br>
+                            Выучено: <strong style="color:var(--bashkir-green)">${learnedCount}</strong> из ${minWords} необходимых.
                         </p>
-                        <button class="tour-btn" onclick="switchTab('words')" style="position:static; background: transparent; border: 1px solid var(--t2-white);">Перейти к словам</button>
+                        <button class="action-btn" onclick="switchTab('words')">Перейти к словам</button>
                     </div>
                 `;
             } else {
