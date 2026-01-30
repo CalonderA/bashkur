@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T2: Голос Урала | Башкортостан</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏔️</text></svg>">
+</head>
+<body>
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">T2 <span class="divider">|</span> <span class="sub-logo">Башкортостан</span></div>
+            <nav class="nav">
+                <a href="#dictionary">Словарь</a>
+                <a href="#culture">Культура</a>
+                <a href="#t2-connect">Связь</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/T2_Logo.svg/1200px-T2_Logo.svg.png" alt="T2 Logo" class="t2-logo">
+            <h1>Открой <span>Башкортостан</span> <br>на скорости T2</h1>
+            <p class="subtitle">Будущее связи и вековые традиции в одном месте</p>
+        </div>
+    </header>
+
+    <!-- Dictionary Section -->
+    <section id="dictionary" class="dictionary-section">
+        <div class="container">
+            <h2 class="section-title">Язык гор (Тел)</h2>
+            
+            <div class="learning-header">
+                <!-- Progress Bar -->
+                <div class="progress-wrapper">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="progress-text">Изучено: <span id="progress-count">0</span> из <span id="total-count">0</span></div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('words')">Слова</button>
+                    <button class="tab-btn" onclick="switchTab('alphabet')">Алфавит</button>
+                    <button class="tab-btn" onclick="switchTab('about')">О Башкирах</button>
+                    <button class="tab-btn" onclick="switchTab('test')">Тест</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Area -->
+            <div id="learning-content">
+                <!-- Grid will be rendered here by JS -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Culture Section -->
+    <section id="culture" class="culture-section">
+        <div class="container">
+            <h2 class="section-title">Дух Урала</h2>
+            <div class="dictionary-grid"> <!-- Reusing grid for consistent look -->
+                <div class="word-card">
+                    <div class="bashkir-word">🏔️</div>
+                    <h3>Урал-батыр</h3>
+                    <p>Древний эпос о герое, который подарил людям жизнь и победил смерть. Как T2 соединяет города, так легенды соединяют поколения.</p>
+                </div>
+                <div class="word-card">
+                    <div class="bashkir-word">🍯</div>
+                    <h3>Башкирский мёд</h3>
+                    <p>Золото республики. Символ здоровья и гостеприимства. Сладкий, как общение с близкими без помех.</p>
+                </div>
+                <div class="word-card">
+                    <div class="bashkir-word">🎶</div>
+                    <h3>Курай</h3>
+                    <p>Тростниковая флейта, в звуке которой слышен ветер степей. Голос души башкирского народа.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="culture-section">
+        <h2 class="section-title">Карта достопримечательностей</h2>
+        <div id="map" class="map-container"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 T2 Мобайл x Башкортостан. Будущее уже здесь.</p>
+    </footer>
+
+    <!-- Revert to 2GIS 2.0 API (Leaflet) for stability without MapGL key -->
+    <script src="https://maps.api.2gis.ru/2.0/loader.js?pkg=full"></script>
+    <script src="js/data.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/tts.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/test.js"></script>
+    <script src="js/learning.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
